@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Sage</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="title_activity_splash">Splash</string>
+    <string name="title_activity_login">Login</string>
+    <string name="title_activity_splash2">Splash2</string>
+</resources>
