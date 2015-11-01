@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:padding="10dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtSender"
+        android:layout_alignParentRight="true"
+        android:padding="12dp"
+        >
+
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/imageMessage"
+                android:background="@android:color/transparent"
+                android:layout_alignParentEnd="true"
+                android:paddingRight="10dp" />
+
+    </RelativeLayout>
+
+</RelativeLayout>
+

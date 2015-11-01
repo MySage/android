@@ -4,6 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,43 +14,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
-
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 import android.widget.EditText;
 import android.widget.ListView;
-import java.net.URL;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import javax.net.ssl.HttpsURLConnection;
 
 
 public class MainActivity extends AppCompatActivity {
 
     private ListView messagesList;
     private MessageAdapter messageAdapter;
-    JSONObject response;
-    private URL url;
 
 
     @Override
@@ -60,9 +34,30 @@ public class MainActivity extends AppCompatActivity {
         messageAdapter = new MessageAdapter(this);
         messagesList.setAdapter(messageAdapter);
 
+        // Acquire a reference to the system Location Manager
+        final LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        // Define a listener that responds to location updates
+        LocationListener locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                // Called when a new location is found by the network location provider.
+                //makeUseOfNewLocation(location);
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {}
+
+            public void onProviderEnabled(String provider) {}
+
+            public void onProviderDisabled(String provider) {}
+        };
+
+// Register the listener with the Location Manager to receive location updates
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("done");
         registerReceiver(requestReceiver, intentFilter);
+
 
 
         //title button that brings you to the info page
@@ -76,14 +71,14 @@ public class MainActivity extends AppCompatActivity {
                 String input = editText.getText().toString();
                 if (!input.equals("")){
                     messageAdapter.addMessage(input, MessageAdapter.DIRECTION_OUTGOING);
+                    String locationProvider = LocationManager.NETWORK_PROVIDER;
+
+                    Location lastKnownLocation = locationManager.getLastKnownLocation(locationProvider);
                     editText.setText("");
                     i.putExtra("input", input);
+                    i.putExtra("latitude", lastKnownLocation.getLatitude());
+                    i.putExtra("longitude", lastKnownLocation.getLongitude());
                     startService(i);
-                    //String output = runnable.getResponse(input);
-
-
-                    //messageAdapter.addMessage(output, MessageAdapter.DIRECTION_INCOMING);
-
                 }
 
             }
@@ -94,7 +89,14 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String response = intent.getExtras().getString("response");
-            messageAdapter.addMessage(response, MessageAdapter.DIRECTION_INCOMING);
+            System.out.println(response);
+            if (response.substring(0, 4).equals("http")){
+                messageAdapter.addMessage(response, MessageAdapter.IMAGE_URL);
+
+            } else{
+                messageAdapter.addMessage(response, MessageAdapter.DIRECTION_INCOMING);
+            }
+
 
         }
     };

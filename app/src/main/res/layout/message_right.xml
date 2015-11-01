@@ -46,9 +46,11 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:textColor="@android:color/white"
-                android:textSize="17sp"
+                android:textSize="20sp"
                 android:text="Hello, how are you?"
                 />
+
+
 
         </RelativeLayout>
     </RelativeLayout>
