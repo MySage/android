@@ -22,16 +22,20 @@
         android:id="@+id/nameText"
         android:textSize="20dp"
         android:textColor="#000000"
-        android:textIsSelectable="true"
-        android:layout_above="@+id/editText"
-        android:layout_centerHorizontal="true"
-        android:text="Name" />
+        android:textIsSelectable="false"
+        android:hint="Name"
+        android:textColorHint="#000000"
+        android:layout_above="@+id/passwordText"
+        android:layout_centerHorizontal="true" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/editText"
-        android:text="Password"
+        android:id="@+id/passwordText"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:gravity="center"
+        android:textColorHint="#000000"
         android:textSize="20dp"
         android:textColor="#000000"
         android:textIsSelectable="false"
@@ -48,4 +52,17 @@
         android:textSize="30dp"
         android:textColor="#000000"
         android:text="Show yourself buddy!" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Wrong username or password"
+        android:textColor="#ee0b0b"
+        android:id="@+id/errorText"
+        android:layout_below="@+id/passwordText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="79dp"
+        android:visibility="invisible" />
+
 </RelativeLayout>
