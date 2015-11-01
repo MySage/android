@@ -1,6 +1,9 @@
 package io.github.sage.sage;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -43,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
 
     private ListView messagesList;
     private MessageAdapter messageAdapter;
-    JSONObject query;
     JSONObject response;
     private URL url;
 
@@ -57,16 +59,15 @@ public class MainActivity extends AppCompatActivity {
         messagesList = (ListView) findViewById(R.id.listMessages);
         messageAdapter = new MessageAdapter(this);
         messagesList.setAdapter(messageAdapter);
-        url = null;
-        try {
-            url = new URL("http://mysage.xyz:8000/consumer/send_message/");
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("done");
+        registerReceiver(requestReceiver, intentFilter);
 
 
         //title button that brings you to the info page
         ImageButton sendButton = (ImageButton)findViewById(R.id.sendButton);
+        final Intent i = new Intent(this, myIntentService.class);
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,57 +76,13 @@ public class MainActivity extends AppCompatActivity {
                 String input = editText.getText().toString();
                 if (!input.equals("")){
                     messageAdapter.addMessage(input, MessageAdapter.DIRECTION_OUTGOING);
-                    query = new JSONObject();
-                    try {
-                        query.put("message", input);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    try {
-
-                        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-                        connection.setRequestMethod("POST");
-                        connection.setRequestProperty("Content-Type", "application/json");
-                        connection.setRequestProperty("Accept", "application/json");
-                        connection.setDoOutput(true);
-                        connection.setDoInput(true);
-
-                        OutputStreamWriter wr= new OutputStreamWriter(connection.getOutputStream());
-                        wr.write(query.toString());
-                        wr.flush();
-                        StringBuilder sb = new StringBuilder();
-                        int HttpResult = connection.getResponseCode();
-                        if(HttpResult == HttpURLConnection.HTTP_OK){
-                            BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream(),"utf-8"));
-                            String line = null;
-                            while ((line = br.readLine()) != null) {
-                                sb.append(line + "\n");
-                            }
-                            br.close();
-                            try {
-                                response = new JSONObject(sb.toString());
-                                messageAdapter.addMessage(response.get("message").toString(), MessageAdapter.DIRECTION_INCOMING);
-                            } catch (JSONException e) {
-                                messageAdapter.addMessage(sb.toString(), MessageAdapter.DIRECTION_INCOMING);
-                            }
-                        }else{
-
-                            System.out.println(connection.getResponseMessage());
-                            System.out.println(connection.getErrorStream());
-                            messageAdapter.addMessage("I didn't quite catch that. Say that again?", MessageAdapter.DIRECTION_INCOMING);
-                        }
-
-
-                    } catch (MalformedURLException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-
                     editText.setText("");
+                    i.putExtra("input", input);
+                    startService(i);
+                    //String output = runnable.getResponse(input);
+
+
+                    //messageAdapter.addMessage(output, MessageAdapter.DIRECTION_INCOMING);
 
                 }
 
@@ -133,6 +90,14 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+    private BroadcastReceiver requestReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String response = intent.getExtras().getString("response");
+            messageAdapter.addMessage(response, MessageAdapter.DIRECTION_INCOMING);
+
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

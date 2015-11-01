@@ -36,7 +36,7 @@ public class Login extends AppCompatActivity {
         StrictMode.setThreadPolicy(policy);
 
         try {
-            url = new URL("http://52.88.98.2:8000/user/login/");
+            url = new URL("http://mysage.xyz:8000/user/login/");
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
