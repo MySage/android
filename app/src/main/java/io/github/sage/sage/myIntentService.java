@@ -14,10 +14,9 @@ public class myIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         requestRunnable run = new requestRunnable();
-        String response = run.getResponse(intent.getExtras().getString("input"));
+        String response = run.getResponse(intent.getExtras().getString("input"), intent.getExtras().getDouble("latitude"), intent.getExtras().getDouble("longitude"));
         Intent i = new Intent("done");
         i.putExtra("response", response);
-        System.out.println(response);
         myIntentService.this.sendBroadcast(i);
 
     }

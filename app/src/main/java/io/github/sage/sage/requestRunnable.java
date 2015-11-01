@@ -1,6 +1,9 @@
 package io.github.sage.sage;
 
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.os.Bundle;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,7 +26,9 @@ public class requestRunnable implements Runnable {
     JSONObject query;
     JSONObject response;
 
-    public String getResponse (String input) {
+
+
+    public String getResponse (String input, double latitude, double longitude) {
         url = null;
         try {
             url = new URL("http://mysage.xyz:8000/consumer/send_message/");
@@ -34,6 +39,9 @@ public class requestRunnable implements Runnable {
         query = new JSONObject();
         try {
             query.put("message", input);
+            query.put("latitude", latitude);
+            query.put("longitude", longitude);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -56,6 +64,7 @@ public class requestRunnable implements Runnable {
 
             OutputStreamWriter wr= new OutputStreamWriter(connection.getOutputStream());
             wr.write(query.toString());
+            System.out.println(query.toString());
             wr.flush();
             StringBuilder sb = new StringBuilder();
             int HttpResult = connection.getResponseCode();
@@ -83,9 +92,11 @@ public class requestRunnable implements Runnable {
         } catch (MalformedURLException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+            responseString = "I didn't quite catch that. Say that again?";
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
+            responseString = "I didn't quite catch that. Say that again?";
         }
     }
 }

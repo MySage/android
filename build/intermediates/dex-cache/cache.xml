@@ -30,6 +30,13 @@
         <dex dex="/Users/dannyeng/AndroidStudioProjects/Sage/app/build/intermediates/pre-dexed/debug/httpclient-android-4.3.5.1-c939294a462e6ed0e7db08eaf689d138c9f8d70d.jar" />
     </item>
     <item
+        jar="/Users/dannyeng/.gradle/caches/modules-2/files-2.1/com.github.bumptech.glide/glide/3.6.1/86b122e640af09b0723e1fa44083c354ba6d9089/glide-3.6.1.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="86b122e640af09b0723e1fa44083c354ba6d9089">
+        <dex dex="/Users/dannyeng/AndroidStudioProjects/Sage/app/build/intermediates/pre-dexed/debug/glide-3.6.1-1228930790d087c1dc045f33ad4ee0a347db24e2.jar" />
+    </item>
+    <item
         jar="/Users/dannyeng/AndroidStudioProjects/Sage/app/build/intermediates/exploded-aar/com.android.support/support-v4/22.1.1/jars/libs/internal_impl-22.1.1.jar"
         jumboMode="false"
         revision="22.0.1"
