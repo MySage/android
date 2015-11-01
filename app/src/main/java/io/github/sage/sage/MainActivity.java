@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView messagesList;
     private MessageAdapter messageAdapter;
     JSONObject query;
+    JSONObject response;
     private URL url;
 
 
@@ -101,10 +102,13 @@ public class MainActivity extends AppCompatActivity {
                             while ((line = br.readLine()) != null) {
                                 sb.append(line + "\n");
                             }
-
                             br.close();
-                            messageAdapter.addMessage(sb.toString(), MessageAdapter.DIRECTION_INCOMING);
-
+                            try {
+                                response = new JSONObject(sb.toString());
+                                messageAdapter.addMessage(response.get("message").toString(), MessageAdapter.DIRECTION_INCOMING);
+                            } catch (JSONException e) {
+                                messageAdapter.addMessage(sb.toString(), MessageAdapter.DIRECTION_INCOMING);
+                            }
                         }else{
 
                             System.out.println(connection.getResponseMessage());
