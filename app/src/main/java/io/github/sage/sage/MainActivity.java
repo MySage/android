@@ -41,7 +41,6 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class MainActivity extends AppCompatActivity {
 
-    int i = 0;
     private ListView messagesList;
     private MessageAdapter messageAdapter;
     JSONObject query;
@@ -110,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
 
                             System.out.println(connection.getResponseMessage());
                             System.out.println(connection.getErrorStream());
-                            messageAdapter.addMessage("Error", MessageAdapter.DIRECTION_INCOMING);
+                            messageAdapter.addMessage("I didn't quite catch that. Say that again?", MessageAdapter.DIRECTION_INCOMING);
                         }
 
 
