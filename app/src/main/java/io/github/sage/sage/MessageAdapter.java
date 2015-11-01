@@ -30,15 +30,15 @@ public class MessageAdapter extends BaseAdapter{
     public static final int DIRECTION_INCOMING = 0;
     public static final int DIRECTION_OUTGOING = 1;
     public static final int IMAGE_URL = 2;
-    private List<Pair<String, Integer>> messages;
+    private List<Pair<Object, Integer>> messages;
     private LayoutInflater layoutInflater;
 
     public MessageAdapter(Activity activity) {
         layoutInflater = activity.getLayoutInflater();
-        messages = new ArrayList<Pair<String, Integer>>();
+        messages = new ArrayList<Pair<Object, Integer>>();
     }
 
-    public void addMessage(String message, int direction) {
+    public void addMessage(Object message, int direction) {
         messages.add(new Pair(message, direction));
         notifyDataSetChanged();
     }
@@ -87,48 +87,12 @@ public class MessageAdapter extends BaseAdapter{
             convertView = layoutInflater.inflate(res, viewGroup, false);
         }
         if (messages.get(i).second == IMAGE_URL){
-
-
-            final View finalConvertView = convertView;
-            new AsyncTask<Void, Void, Void>() {
-                Bitmap bmp;
-                @Override
-                protected Void doInBackground(Void... params) {
-                    String message = messages.get(i).first;
-
-                    try {
-                        InputStream in = new URL(message).openStream();
-                        System.out.println(message);
-                        bmp = BitmapFactory.decodeStream(in);
-                    } catch (MalformedURLException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Void result) {
-                    if (bmp != null){
-                        float aspectRatio = bmp.getWidth() /
-                                (float) bmp.getHeight();
-                        int width = 900;
-                        int height = Math.round(width / aspectRatio);
-
-                        bmp = Bitmap.createScaledBitmap(
-                                bmp, width, height, false);
-                        ImageButton imageMessage = (ImageButton) finalConvertView.findViewById(R.id.imageMessage);
-                        imageMessage.setImageBitmap(bmp);
-                    }
-
-                }
-
-            }.execute();
+            ImageButton imageMessage = (ImageButton) convertView.findViewById(R.id.imageMessage);
+            imageMessage.setImageBitmap((Bitmap)messages.get(i).first);
         }
         else{
             TextView txtMessage = (TextView) convertView.findViewById(R.id.txtMessage);
-            txtMessage.setText(messages.get(i).first);
+            txtMessage.setText(messages.get(i).first.toString());
         }
 
         return convertView;

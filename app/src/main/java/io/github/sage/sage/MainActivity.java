@@ -4,9 +4,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,6 +19,11 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.EditText;
 import android.widget.ListView;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -89,15 +97,55 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
             String response = intent.getExtras().getString("response");
+            final String message = response;
             System.out.println(response);
+
             if (response.substring(0, 4).equals("http")){
-                messageAdapter.addMessage(response, MessageAdapter.IMAGE_URL);
+                new AsyncTask<Void, Void, Void>() {
+                    Bitmap bmp;
+                    @Override
+                    protected Void doInBackground(Void... params) {
+                        try {
+                            InputStream in = new URL(message).openStream();
+                            System.out.println(message);
+                            bmp = BitmapFactory.decodeStream(in);
+                        } catch (MalformedURLException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Void result) {
+                        if (bmp != null){
+                            float aspectRatio = bmp.getWidth() /
+                                    (float) bmp.getHeight();
+                            if (bmp.getWidth() > 300){
+                                int width = 900;
+                                int height = Math.round(width / aspectRatio);
+
+                                bmp = Bitmap.createScaledBitmap(
+                                        bmp, width, height, false);
+                                messageAdapter.addMessage(bmp, MessageAdapter.IMAGE_URL);
+                            } else {
+                                int width = 50;
+                                int height = Math.round(width / aspectRatio);
+
+                                bmp = Bitmap.createScaledBitmap(
+                                        bmp, width, height, false);
+                                messageAdapter.addMessage(bmp, MessageAdapter.IMAGE_URL);
+                            }
+
+                        }
+
+                    }
+                }.execute();
 
             } else{
                 messageAdapter.addMessage(response, MessageAdapter.DIRECTION_INCOMING);
             }
-
-
         }
     };
 

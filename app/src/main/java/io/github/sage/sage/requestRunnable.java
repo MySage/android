@@ -79,6 +79,9 @@ public class requestRunnable implements Runnable {
                 try {
                     response = new JSONObject(sb.toString());
                     responseString = response.get("message").toString();
+                    if (responseString.equals("")){
+                        responseString = "I didn't quite catch that. Say that again?";
+                    }
                 } catch (JSONException e) {
                     responseString = sb.toString();
                 }
